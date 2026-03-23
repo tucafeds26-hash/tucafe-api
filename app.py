@@ -58,7 +58,17 @@ def index():
             'admin':     '/api/v1/admin',
         }
     }), 200
-
+@app.route('/hora')
+def hora_actual():
+    import pytz
+    from datetime import datetime
+    tz = pytz.timezone('America/Mexico_City')
+    ahora = datetime.now(tz)
+    return jsonify({
+        'utc': datetime.utcnow().strftime('%H:%M'),
+        'mexico': ahora.strftime('%H:%M'),
+        'hora': ahora.hour
+    })
 def job_calidad():
     from datetime import datetime
     while True:
