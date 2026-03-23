@@ -5,6 +5,7 @@ from models.pedido import Pedido, ItemPedido, EstadoSeccion
 from models.producto import Producto
 from datetime import datetime, timedelta, time
 import qrcode, io, base64
+import pytz
 
 pedidos_api = Blueprint('pedidos_api', __name__)
 
@@ -94,7 +95,6 @@ def crear_pedido():
         try:
             hora_recoger = datetime.strptime(data['hora_recoger'], '%H:%M').time()
             # Validar que la hora sea futura (en zona Mexico)
-            import pytz
             tz_mexico = pytz.timezone('America/Mexico_City')
             ahora = datetime.now(tz_mexico).time()
             if hora_recoger <= ahora:

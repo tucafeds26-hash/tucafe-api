@@ -14,6 +14,7 @@ from routes.productos import productos_api
 from routes.pedidos import pedidos_api
 from routes.chef import chef_api
 from routes.admin import admin_api
+import pytz
 
 app = Flask(__name__)
 
@@ -70,8 +71,6 @@ def hora_actual():
         'hora': ahora.hour
     })
 def job_calidad():
-    from datetime import datetime
-    import pytz
     tz_mexico = pytz.timezone('America/Mexico_City')
     while True:
         time.sleep(60)
