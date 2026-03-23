@@ -29,9 +29,7 @@ def crear_estados_seccion(pedido):
         db.session.add(est)
 
 def generar_horas_recoger():
-    import pytz
     from datetime import datetime, timedelta, time as dtime
-
     tz_mexico   = pytz.timezone('America/Mexico_City')
     ahora       = datetime.now(tz_mexico).replace(tzinfo=None)
     minimo      = ahora + timedelta(minutes=20)
@@ -87,7 +85,6 @@ def check_notificaciones():
 def crear_pedido():
     identity = get_jwt_identity()
     data     = request.get_json()
-    print(f"[API] Crear pedido: data={data}")
     if not data or not data.get('items'):
         return jsonify({'error': 'Se requieren items'}), 400
 
@@ -95,15 +92,7 @@ def crear_pedido():
     if data.get('hora_recoger'):
         try:
             hora_recoger = datetime.strptime(data['hora_recoger'], '%H:%M').time()
-            # Validar que la hora sea futura (en zona Mexico)
-            tz_mexico = pytz.timezone('America/Mexico_City')
-            ahora = datetime.now(tz_mexico).time()
-            print(f"[API] hora_recoger: {hora_recoger}, ahora: {ahora}")
-            if hora_recoger <= ahora:
-                print(f"[API] Hora pasada, rechazando")
-                return jsonify({'error': 'La hora de recoger debe ser futura'}), 400
-        except ValueError as e:
-            print(f"[API] Error parsing hora: {e}")
+        except ValueError:
             return jsonify({'error': 'Hora de recoger invalida'}), 400
 
     pedido = Pedido(
