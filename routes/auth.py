@@ -31,13 +31,7 @@ def login():
     usuario = Usuario.query.filter_by(email=data['email']).first()
     if not usuario or not usuario.check_password(data['password']):
         return jsonify({'error': 'Credenciales incorrectas'}), 401
-    token = create_access_token(identity={
-        'id':      usuario.id,
-        'nombre':  usuario.nombre,
-        'email':   usuario.email,
-        'rol':     usuario.rol,
-        'seccion': usuario.seccion,
-    })
+    token = create_access_token(identity=usuario.id)
     return jsonify({
         'ok':     True,
         'token':  token,
@@ -47,8 +41,8 @@ def login():
 @auth_api.route('/me', methods=['GET'])
 @jwt_required()
 def me():
-    identity = get_jwt_identity()
-    usuario  = Usuario.query.get(identity['id'])
+    usuario_id = get_jwt_identity()
+    usuario  = Usuario.query.get(usuario_id)
     if not usuario:
         return jsonify({'error': 'Usuario no encontrado'}), 404
     return jsonify({'ok': True, 'usuario': usuario.to_dict()}), 200
@@ -65,11 +59,5 @@ def verificar():
     usuario.verificado = True
     usuario.codigo_ver = None
     db.session.commit()
-    token = create_access_token(identity={
-        'id':      usuario.id,
-        'nombre':  usuario.nombre,
-        'email':   usuario.email,
-        'rol':     usuario.rol,
-        'seccion': usuario.seccion,
-    })
+    token = create_access_token(identity=usuario.id)
     return jsonify({'ok': True, 'token': token, 'usuario': usuario.to_dict()}), 200
