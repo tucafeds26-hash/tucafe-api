@@ -31,7 +31,7 @@ def login():
     usuario = Usuario.query.filter_by(email=data['email']).first()
     if not usuario or not usuario.check_password(data['password']):
         return jsonify({'error': 'Credenciales incorrectas'}), 401
-    token = create_access_token(identity=usuario.id)
+    token = create_access_token(identity=str(usuario.id))
     return jsonify({
         'ok':     True,
         'token':  token,
@@ -59,5 +59,5 @@ def verificar():
     usuario.verificado = True
     usuario.codigo_ver = None
     db.session.commit()
-    token = create_access_token(identity=usuario.id)
+    token = create_access_token(identity=str(usuario.id))
     return jsonify({'ok': True, 'token': token, 'usuario': usuario.to_dict()}), 200

@@ -57,7 +57,7 @@ def generar_horas_recoger():
 @pedidos_api.route('/', methods=['GET'])
 @jwt_required()
 def mis_pedidos():
-    usuario_id = get_jwt_identity()
+    usuario_id = int(get_jwt_identity())
     pedidos  = Pedido.query.filter_by(
         usuario_id=usuario_id, archivado=False
     ).order_by(Pedido.creado_en.desc()).all()
@@ -76,7 +76,7 @@ def horas_disponibles():
 @pedidos_api.route('/notificaciones', methods=['GET'])
 @jwt_required()
 def check_notificaciones():
-    usuario_id = get_jwt_identity()
+    usuario_id = int(get_jwt_identity())
     pedidos  = Pedido.query.filter_by(usuario_id=usuario_id, archivado=False).all()
     listos   = [p.to_dict() for p in pedidos if any(e.notificacion for e in p.estados)]
     return jsonify({'ok': True, 'tiene': len(listos) > 0, 'pedidos': listos}), 200
@@ -84,7 +84,7 @@ def check_notificaciones():
 @pedidos_api.route('/crear', methods=['POST'])
 @jwt_required()
 def crear_pedido():
-    usuario_id = get_jwt_identity()
+    usuario_id = int(get_jwt_identity())
     data     = request.get_json()
     if not data or not data.get('items'):
         return jsonify({'error': 'Se requieren items'}), 400
@@ -135,7 +135,7 @@ def crear_pedido():
 @pedidos_api.route('/<int:pedido_id>', methods=['GET'])
 @jwt_required()
 def detalle_pedido(pedido_id):
-    usuario_id = get_jwt_identity()
+    usuario_id = int(get_jwt_identity())
     usuario = Usuario.query.get(usuario_id)
     pedido   = Pedido.query.get_or_404(pedido_id)
     if pedido.usuario_id != usuario_id and usuario.rol not in ('admin', 'chef'):
