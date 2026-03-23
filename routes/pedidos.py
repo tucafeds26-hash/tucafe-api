@@ -29,7 +29,7 @@ def crear_estados_seccion(pedido):
 
 def generar_horas_recoger():
     import pytz
-    from datetime import datetime, timedelta, time
+    from datetime import datetime, timedelta, time as dtime
 
     tz_mexico   = pytz.timezone('America/Mexico_City')
     ahora       = datetime.now(tz_mexico).replace(tzinfo=None)
@@ -37,12 +37,12 @@ def generar_horas_recoger():
     hora_actual = ahora.hour
 
     if hora_actual < 15:
-        turno_inicio = datetime.combine(ahora.date(), time(8, 0))
-        turno_fin    = datetime.combine(ahora.date(), time(14, 0))
+        turno_inicio = datetime.combine(ahora.date(), dtime(8, 0))
+        turno_fin    = datetime.combine(ahora.date(), dtime(14, 0))
         turno_nombre = 'Matutino'
     else:
-        turno_inicio = datetime.combine(ahora.date(), time(15, 0))
-        turno_fin    = datetime.combine(ahora.date(), time(20, 0))
+        turno_inicio = datetime.combine(ahora.date(), dtime(15, 0))
+        turno_fin    = datetime.combine(ahora.date(), dtime(20, 0))
         turno_nombre = 'Vespertino'
 
     slots = []
