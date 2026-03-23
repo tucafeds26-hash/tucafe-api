@@ -1,4 +1,4 @@
 from .usuario import Usuario
-from .pedido import Pedido
 from .producto import Producto
+from .pedido import Pedido
 from .detalle_pedido import DetallePedido

@@ -1,4 +1,4 @@
-from extensions import db
+from config.database import db
 
 class DetallePedido(db.Model):
     __tablename__ = 'detalle_pedido'
@@ -7,3 +7,11 @@ class DetallePedido(db.Model):
     pedido_id = db.Column(db.Integer, db.ForeignKey('pedido.id'), nullable=False)
     producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "pedido_id": self.pedido_id,
+            "producto_id": self.producto_id,
+            "cantidad": self.cantidad
+        }
