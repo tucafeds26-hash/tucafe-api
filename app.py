@@ -1,6 +1,7 @@
 import os
 import threading
 import time
+from datetime import datetime
 
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
@@ -20,7 +21,6 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'tucafe-api-secret-2026'
 
-# BD — Railway usa postgresql://, SQLAlchemy necesita postgresql+psycopg2://
 db_url = os.environ.get('DATABASE_URL', '')
 print(f'[DB] DATABASE_URL encontrada: {"SI" if db_url else "NO"}')
 if not db_url:
@@ -59,24 +59,24 @@ def index():
             'admin':     '/api/v1/admin',
         }
     }), 200
+
 @app.route('/hora')
 def hora_actual():
-    import pytz
-    from datetime import datetime
     tz = pytz.timezone('America/Mexico_City')
     ahora = datetime.now(tz)
     return jsonify({
-        'utc': datetime.utcnow().strftime('%H:%M'),
+        'utc':    datetime.utcnow().strftime('%H:%M'),
         'mexico': ahora.strftime('%H:%M'),
-        'hora': ahora.hour
+        'hora':   ahora.hour
     })
+
 def job_calidad():
     tz_mexico = pytz.timezone('America/Mexico_City')
     while True:
         time.sleep(60)
         try:
             with app.app_context():
-                ahora = datetime.now(tz_mexico).time()
+                ahora    = datetime.now(tz_mexico).replace(tzinfo=None).time()
                 vencidos = Pedido.query.filter(
                     Pedido.hora_recoger != None,
                     Pedido.hora_recoger < ahora,
