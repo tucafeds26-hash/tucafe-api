@@ -87,6 +87,7 @@ def check_notificaciones():
 def crear_pedido():
     identity = get_jwt_identity()
     data     = request.get_json()
+    print(f"[API] Crear pedido: data={data}")
     if not data or not data.get('items'):
         return jsonify({'error': 'Se requieren items'}), 400
 
@@ -97,9 +98,12 @@ def crear_pedido():
             # Validar que la hora sea futura (en zona Mexico)
             tz_mexico = pytz.timezone('America/Mexico_City')
             ahora = datetime.now(tz_mexico).time()
+            print(f"[API] hora_recoger: {hora_recoger}, ahora: {ahora}")
             if hora_recoger <= ahora:
+                print(f"[API] Hora pasada, rechazando")
                 return jsonify({'error': 'La hora de recoger debe ser futura'}), 400
-        except ValueError:
+        except ValueError as e:
+            print(f"[API] Error parsing hora: {e}")
             return jsonify({'error': 'Hora de recoger invalida'}), 400
 
     pedido = Pedido(
