@@ -16,7 +16,10 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY']                     = 'tucafe-api-secret-2026'
 import os
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql+psycopg2://postgres:12345@localhost:5432/tucafe').replace('postgres://', 'postgresql+psycopg2://')
+db_url = os.environ.get('DATABASE_URL', 'postgresql+psycopg2://postgres:12345@localhost:5432/tucafe')
+if db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY']                 = 'tucafe-jwt-secret-2026'
 app.config['JWT_ACCESS_TOKEN_EXPIRES']       = False
