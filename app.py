@@ -71,11 +71,13 @@ def hora_actual():
     })
 def job_calidad():
     from datetime import datetime
+    import pytz
+    tz_mexico = pytz.timezone('America/Mexico_City')
     while True:
         time.sleep(60)
         try:
             with app.app_context():
-                ahora    = datetime.now().time()
+                ahora = datetime.now(tz_mexico).time()
                 vencidos = Pedido.query.filter(
                     Pedido.hora_recoger != None,
                     Pedido.hora_recoger < ahora,

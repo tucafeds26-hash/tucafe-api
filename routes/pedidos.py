@@ -93,6 +93,12 @@ def crear_pedido():
     if data.get('hora_recoger'):
         try:
             hora_recoger = datetime.strptime(data['hora_recoger'], '%H:%M').time()
+            # Validar que la hora sea futura (en zona Mexico)
+            import pytz
+            tz_mexico = pytz.timezone('America/Mexico_City')
+            ahora = datetime.now(tz_mexico).time()
+            if hora_recoger <= ahora:
+                return jsonify({'error': 'La hora de recoger debe ser futura'}), 400
         except ValueError:
             return jsonify({'error': 'Hora de recoger invalida'}), 400
 
