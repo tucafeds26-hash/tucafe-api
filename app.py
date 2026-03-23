@@ -1,3 +1,7 @@
+import os
+import threading
+import time
+
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -10,17 +14,23 @@ from routes.productos import productos_api
 from routes.pedidos import pedidos_api
 from routes.chef import chef_api
 from routes.admin import admin_api
-import threading, time, os
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'tucafe-api-secret-2026'
 
-db_url = os.environ.get('DATABASE_URL', 'postgresql+psycopg2://postgres:12345@localhost:5432/tucafe')
-if db_url.startswith('postgres://'):
-    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+# BD — Railway usa postgresql://, SQLAlchemy necesita postgresql+psycopg2://
+db_url = os.environ.get('DATABASE_URL', '')
+print(f'[DB] DATABASE_URL encontrada: {"SI" if db_url else "NO"}')
+if not db_url:
+    db_url = 'postgresql+psycopg2://postgres:12345@localhost:5432/tucafe'
+elif db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql+psycopg2://', 1)
+elif db_url.startswith('postgresql://'):
+    db_url = db_url.replace('postgresql://', 'postgresql+psycopg2://', 1)
+print(f'[DB] Conectando a: {db_url[:30]}...')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+app.config['SQLALCHEMY_DATABASE_URI']        = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY']                 = 'tucafe-jwt-secret-2026'
 app.config['JWT_ACCESS_TOKEN_EXPIRES']       = False
