@@ -10,15 +10,16 @@ from routes.productos import productos_api
 from routes.pedidos import pedidos_api
 from routes.chef import chef_api
 from routes.admin import admin_api
-import threading, time
+import threading, time, os
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY']                     = 'tucafe-api-secret-2026'
-import os
+app.config['SECRET_KEY'] = 'tucafe-api-secret-2026'
+
 db_url = os.environ.get('DATABASE_URL', 'postgresql+psycopg2://postgres:12345@localhost:5432/tucafe')
 if db_url.startswith('postgres://'):
     db_url = db_url.replace('postgres://', 'postgresql://', 1)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY']                 = 'tucafe-jwt-secret-2026'
