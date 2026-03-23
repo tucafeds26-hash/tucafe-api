@@ -8,3 +8,4 @@ qrcode[pil]
 stripe
 reportlab
 gunicorn
+pytz
